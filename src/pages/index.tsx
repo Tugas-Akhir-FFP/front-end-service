@@ -6,7 +6,6 @@ const DynamicComponentWithNoSSR = dynamic(
   { loading: () => <Loader /> }
 );
 
-
 export default function Index() {
   return <DynamicComponentWithNoSSR />
 }
