@@ -1,6 +1,6 @@
 import { Chart as ChartJS } from "chart.js/auto";
 import React, { useRef, useEffect } from "react";
-const Chart = ({ data, tanggal }) => {
+const Chart = ({data, tanggal, id}) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -131,14 +131,13 @@ const Chart = ({ data, tanggal }) => {
       plugins: plugins,
     });
     return () => {
-      // destroy chart on unmount
       charts.destroy();
     }
   }, [data]);
 
   return (
     <div>
-      <canvas id="myChart" ref={chartRef} />
+      <canvas id={id} ref={chartRef} />
     </div>
   );
 }

@@ -8,32 +8,11 @@ const MultiBarChart = (props) => {
     const chartInstance = new ChartJS(chartRef.current, {
       type: "bar",
       data: {
-        labels: props.label[0],
+        labels: ["MAPE", "MSE", "RMSE", "MAE"],
         datasets: [
           {
             label: "Rendah",
-            data: props.rendah[0],
-            backgroundColor: "rgba(11, 2, 250, 1)",
-            borderColor: "rgba(11, 2, 250, 1)",
-            borderWidth: 1,
-          },
-          {
-            label: "Sedang",
-            data: props.sedang[0],
-            backgroundColor: "rgba(3, 255, 11)",
-            borderColor: "rgba(3, 255, 11)",
-            borderWidth: 1,
-          },
-          {
-            label: "Tinggi",
-            data: props.tinggi[0],
-            backgroundColor: "rgba(250, 229, 2)",
-            borderColor: "rgba(250, 229, 2)",
-            borderWidth: 1,
-          },
-          {
-            label: "Sangat Tinggi",
-            data: props.sangatTinggi[0],
+            data: [0.1, 0.2, 0.3, 0.4],
             backgroundColor: "rgba(252, 11, 3)",
             borderColor: "rgba(252, 11, 3)",
             borderWidth: 1,
@@ -63,7 +42,7 @@ const MultiBarChart = (props) => {
 
   return (
     <div>
-      <canvas ref={chartRef} id="myBarChart" height={400}/>
+      <canvas ref={chartRef} id={props.id} height={400} />
     </div>
   );
 }

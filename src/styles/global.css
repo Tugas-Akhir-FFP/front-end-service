@@ -1,0 +1,20 @@
+
+.biru {
+  fill:rgba(11, 2, 250, 1);
+  stroke:rgba(11, 2, 250, 1);
+}
+
+.hijau {
+  fill:rgba(3, 255, 11);
+  stroke:rgba(3, 255, 11);;
+}
+
+.kuning {
+  fill:rgba(250, 229, 2);
+  stroke:rgba(250, 229, 2);
+}
+
+.merah {
+  fill:rgba(252, 11, 3);
+  stroke:rgba(252, 11, 3);
+}

@@ -1,8 +1,10 @@
 import React, {useEffect} from "react";
 import MapGis from "../../Component/Map";
-import {  Marker, Popup } from 'react-leaflet';
+import { Marker, Popup, GeoJSON, FeatureGroup, } from 'react-leaflet';
 import  {RollbackOutlined } from '@ant-design/icons';
 import Chart from "../../Component/Chart";
+import Chart2 from "../../Component/Chart2";
+import BarChartV2 from "../../Component/BarChartV2";
 import Card from "../../Component/Card";
 import { Select, DatePicker, Modal } from "antd";
 import { useState } from "react";
@@ -14,32 +16,41 @@ import ChartMultiline from "../../Component/BarChart";
 import { Tabs, Carousel } from 'antd';
 import axios from "axios";
 import moment from "moment";
+import { gresikdata } from "../../assets/Gresik";
+import { dataMalang } from "../../assets/Malang";
+import { dataSidoarjo } from "../../assets/Sidoarjo";
+import { dataNunukan } from "../../assets/Nunukan";
+import { kotawaringinbarat } from "../../assets/KotaWarbar";
+import { Spin } from "antd";
+import clsx from "clsx";
+moment.locale('id')
 function Dashboard(props) {
   const [state, setState] = useState({
     province: null,
     kabupaten: null,
     stasiun: null,
-    date: null,
-    date2: null,
+    startDate: null,
+    endDate: null,
     isModalVisible: false,
     dataPrediksi: null,
     dataForecast: null,
     error: null,
     parameter: null,
+    fetching: false,
   })
+  const {startDate, endDate, fetching} = state
   const handlePrediksi = () => {
-    axios.get("https://back-end-service-bvlffyleta-uc.a.run.app/api?sheetName=Kab. MalangNew&worksheetName=Data%20Harian%20-%20Table&periods=10&start=2023-03-07&end=2023-03-25")
+    setState({ ...state, fetching: true })
+    axios.get(`https://back-end-service-bvlffyleta-uc.a.run.app/api?sheetName=${kabupaten}&worksheetName=Data%20Harian%20-%20Table&periods=10&start=${moment(startDate).format("YYYY-MM-DD")}&end=${moment(endDate).format("YYYY-MM-DD")}`)
       .then((res) => {
-        setState({ ...state, dataPrediksi: res.data })
+
+        setState({ ...state, dataPrediksi: res.data, fetching: false })
       })
       .catch((err) => {
-        setState({ ...state, error: err })
+        setState({ ...state, error: err, fetching: false })
       })
   }
-  useEffect(() => {
-    handlePrediksi()
-  }, [])
-  const { province, kabupaten, stasiun, date, date2, isModalVisible } = state
+  const { province, kabupaten, stasiun,  isModalVisible } = state
   const handleOk = () => {
     setState({ ...state, isModalVisible: !isModalVisible })
   } 
@@ -47,35 +58,44 @@ function Dashboard(props) {
     setState({ ...state, isModalVisible: !isModalVisible })
   }
   const ModalParameters = () => {
-    console.log(state.parameter)
     return (
-      <Modal title="Basic Modal" open={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={false}>
-        <Chart />
+      <Modal title="Parameter" open={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={false}>
+        <Chart data={state.parameter} tanggal={tanggal[0]}/>
       </Modal>
     )
   }
   const Provinsi = [
-    { value: 'Aceh', label: 'Aceh' },
-    { value: 'Sumatera Utara', label: 'Sumatera Utara' },
-    { value: 'Sumatera Barat', label: 'Sumatera Barat' },
-    { value: 'Riau', label: 'Riau' },
-    { value: 'Kepulauan Riau', label: 'Kepulauan Riau' },
-    { value: 'Jambi', label: 'Jambi' },
+    { value: 0, label: 'Kalimantan Utara' },
+    { value: 1, label: 'Kalimantan Tengah' },
+    { value: 2, label: 'Jawa Tengah' },
+    { value: 3, label: 'Jawa Timur' },
   ]
+  
 
   const Kabupaten = [
-    { value: 'Kab. Nunukan', label: 'Kab. Nunukan' },
-    { value: 'Kab. Kotawaringin Barat', label: 'Kab. Kotawaringin Barat' },
-    { value: 'Kab. Malang', label: 'Kab. Malang' },
-    { value: 'Kab. Gresik', label: 'Kab. Gresik' },
-    { value: 'Kab. Sidoarjo', label: 'Kab. Sidoarjo' },
+    { value: 'Kab. Nunukan', label: 'Kab. Nunukan', id_province: 0 , id_kabupaten: 0},
+    { value: 'kotawaringinbarat', label: 'Kab. Kotawaringin Barat', id_province: 1, id_kabupaten: 1 },
+    { value: 'Kab. MalangNew', label: 'Kab. Malang' , id_province: 2, id_kabupaten: 2},
+    { value: 'Kab. GresikNew', label: 'Kab. Gresik' , id_province: 3, id_kabupaten: 3},
+    { value: 'Kab. SidoarjoNew', label: 'Kab. Sidoarjo' , id_province: 3, id_kabupaten: 4},
+  ]
+  let filterKabupaten = Kabupaten.filter((item) => {
+    return item.id_province === province
+  })
+  
+  const Stasiun = [
+    { value: 'Stasiun Meterologi Nunukan', label: 'Stasiun Meterologi Nunukan', nama_kabupaten: "Kab. Nunukan" },
+    { value: 'Stasiun Meterologi Iskandar', label: 'Stasiun Meterologi Iskandar', nama_kabupaten: "kotawaringinbarat"},
+    { value: 'Stasiun Klimatologi Jawa Timur', label: 'Stasiun Klimatologi Jawa Timur', 
+      nama_kabupaten: "Kab. MalangNew" },
+    { value: 'Stasiun Meteorologi Sangkapura', label: 'Stasiun Meteorologi Sangkapura', 
+    nama_kabupaten: "Kab. GresikNew" },
+    { value: 'Stasiun Meteorologi Juanda', label: 'Stasiun Meteorologi Juanda', nama_kabupaten: "Kab. SidoarjoNew" },
   ]
 
-  const Stasiun = [
-    { value: 'Stasiun Meterologi Kalimantan Utara', label: 'Stasiun Meterologi Kalimantan Utara' },
-    { value: 'Stasiun Meterologi Riau', label: 'Stasiun Meterologi Riau' },
-    { value: 'Stasiun Meterologi Sumatera Utara', label: 'Stasiun Meterologi Sumatera Utara' },
-  ]
+  let filterStasiun = Stasiun.filter((item) => {
+    return item.nama_kabupaten === kabupaten
+  })
   const listDataParameter = [
     {
       title:"Temperature",
@@ -118,10 +138,10 @@ function Dashboard(props) {
   const tinggi = [];
   const sangatTinggi = [];
   const fwi = [];
+  console.log(state.dataPrediksi)
   fwi.push(state.dataPrediksi?.Data_Result.map((item) => {
     return item.Result?.Category?.fwi
   }))
-  console.log(fwi)
   sedang.push(state.dataPrediksi?.Data_Result.map((item) => {
     return item.Result?.Fuzzy[1]
   }))
@@ -137,17 +157,80 @@ function Dashboard(props) {
   rendah.push(state.dataPrediksi?.Data_Result.map((item) => {
     return item.Result?.Fuzzy[0]
   }))
-  const handleClickItemParameter = ({ target }) => {
-    const data = [];
-    if (target.alt === "hot") {
-      data.push(listDataParameter[0])
-    } 
+
+  const handleClickItemParameter = ({ data }) => {
     setState({
       ...state, isModalVisible: !isModalVisible, parameter: data
     })
   }
   const handleClikToHome = () => {
     window.location.href = "/"
+  }
+  const handleChangeDate = (dates, dateStrings) => {
+    console.log(dates, dateStrings);
+    setState({
+      ...state, startDate: dateStrings[0], endDate: dateStrings[1]
+    })
+  }
+
+  const renderPoligon = () => {
+    switch (kabupaten) {
+      case "Kab. Nunukan":
+        return (
+          <GeoJSON data={dataNunukan} className="kuning" />
+        )
+      case "kotawaringinbarat":
+        return (
+          <GeoJSON data={kotawaringinbarat} className="kuning" />
+        )
+      case "Kab. MalangNew":
+        return (
+          <GeoJSON data={dataMalang} className="biru" />
+        )
+      case "Kab. GresikNew":
+        return (
+          <GeoJSON data={gresikdata} className="hijau" />
+        )
+      case "Kab. SidoarjoNew":
+        return (
+          <GeoJSON data={dataSidoarjo} className="merah" />
+        )
+      default:
+        break;
+    }
+  }
+
+  const renderMarker = () => {
+    switch (kabupaten) {
+      case "Kab. Nunukan":
+        return (
+          <Marker position={[4.44356592231071, 115.71489159402185]} />
+        )
+      case "kotawaringinbarat":
+        return (
+          <Marker position={[-2.75, 111.5]}  />
+        )
+      case "Kab. MalangNew":
+        return (
+          <Marker position={[-7.901117, 112.597553]}  />
+        )
+      case "Kab. GresikNew":
+        return (
+          <Marker position={[-7.25, 112.75]}  />
+        )
+      case "Kab. SidoarjoNew":
+        return (
+          <Marker position={[-7.372563565, 112.78204515]} />
+        )
+      default:
+        break;
+    }
+  }
+  let disabled = province === null || kabupaten === null || stasiun === null || startDate === null || endDate === null
+
+  const handleDisableDate = (date) => {
+    // disable jika start lebih besar dari tanggal 18 mei 2023 atau end lebih besar dari tanggal 18 mei 2023
+    return date > moment("2023-05-18") || date < moment("2020-01-01")
   }
     return(
     <div className="flex w-full bg-[rgb(25,40,65,0.1)]">
@@ -160,12 +243,12 @@ function Dashboard(props) {
         </div>
           <Carousel >
             <div className="flex justify-center !important ">
-              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[0]} onClick={handleClickItemParameter.bind(0)} />
-              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[1]} onClick={handleClickItemParameter.bind(1)} />
+              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[0]} onClick={handleClickItemParameter.bind(null,listDataParameter[0])} />
+              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[1]} onClick={handleClickItemParameter.bind(null,listDataParameter[1])} />
             </div>
             <div className="flex justify-center !important">
-              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[2]} onClick={handleClickItemParameter.bind(2)} />
-              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[3]} onClick={handleClickItemParameter.bind(3)} />
+              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[2]} onClick={handleClickItemParameter.bind(null,listDataParameter[2])} />
+              <Card background="bg-bgCloud" className="snap-center " {...listDataParameter[3]} onClick={handleClickItemParameter.bind(null,listDataParameter[3])} />
             </div>
           </Carousel>
         {/* chart and maps */}
@@ -180,33 +263,27 @@ function Dashboard(props) {
               <Tabs.TabPane tab="FWI" key="2">
                 <div className="p-[20px] rounded-md   bg-[rgb(194,194,194,0.5)]">
                   <h1 className="text-3xl text-center">Fire Weather Index</h1>
-                  <Chart data={fwi} />
+                  <Chart2 data={fwi[0]} tanggal={tanggal[0]} id="mychart2"/>
                 </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="Maps" key="3">
                 <div className="p-[20px] rounded-md  bg-[rgb(194,194,194,0.5)] my-5">
                   <MapGis height="400px" zoom={5}>
-                    <Marker position={[2.8410034767493815, 117.38606597564618]}>
-                      <Popup>
-                        Stasiun Meterologi Kalimantan Utara🔥
-                        <h3>Suhu 35</h3>
-                        <h3>Kelembapan 50</h3>
-                        <h3>Angin 10</h3>
-                        <h3>Curah Hukan 2</h3>
-                        <span></span>
-                      </Popup>
-                    </Marker>
-                    <Marker position={[0.292714, 101.285209]}>
-                      <Popup>
-                        <h1>Stasiun Meterologi Riau🔥</h1>
-                        <h3>Suhu 35</h3>
-                        <h3>Kelembapan 50</h3>
-                        <h3>Angin 10</h3>
-                        <h3>Curah Hukan 2</h3>
-
-                      </Popup>
-                    </Marker>
+                    <FeatureGroup>
+                      {
+                        kabupaten && renderPoligon()
+                      }
+                      {
+                        kabupaten && renderMarker()
+                      }
+                      
+                    </FeatureGroup>
                   </MapGis>
+                </div>
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Error" key="4">
+                <div className="p-[20px] rounded-md  bg-[rgb(194,194,194,0.5)] my-5">
+                  <BarChartV2 id="mychart3" />
                 </div>
               </Tabs.TabPane>
             </Tabs>
@@ -221,7 +298,7 @@ function Dashboard(props) {
           <div className="flex justify-center py-[10px]">
             <img src="/assets/bmkg.png" alt="bmkg" className="w-[50px]" />
             <div className="ml-[20px] flex flex-col">
-              <h1 className="text-xl">Stasiun Meterologi</h1>
+                <h1 className="text-xl">{stasiun}</h1>
               <span className="text-sm">Lang -0.343553 Long -0.4353535</span>
             </div>
             
@@ -230,30 +307,33 @@ function Dashboard(props) {
             <Select
               placeholder="Pilih Provinsi"
               options={Provinsi}
-              onChange={(e) => setState({ ...state, province: e })}
+              onChange={(e) => setState({ ...state, province: e, kabupaten:null, stasiun:null, dataPrediksi:null, startDate:null, endDate:null })}
               value={province}
             />
             <Select
               placeholder="Pilih Kota/ Kabupaten"
-              options={Kabupaten}
-              onChange={(e) => setState({ ...state, kabupaten: e })}
+              options={filterKabupaten} 
+                onChange={(e) => setState({ ...state, kabupaten: e, stasiun: null, dataPrediksi: null, startDate: null, endDate: null })}
               value={kabupaten}
             />
             <Select
               placeholder="Pilih Stasiun"
-              options={Stasiun}
-                onChange={(e) => setState({ ...state, stasiun: e })}
+              options={filterStasiun}
+                onChange={(e) => setState({ ...state, stasiun: e, dataPrediksi: null, startDate: null, endDate: null })}
               value={stasiun}
             />
             <DatePicker.RangePicker 
-                onChange={
-                  (e) => {
-                    setState({ ...state, date: e[0], date2: e[1] })
-                  }
-                }
-              value={[date, date2]}
+                onChange={handleChangeDate}
+                startDate={startDate}
+                endDate={endDate}
+                disabledDate={handleDisableDate}
             />
-            <button className="bg-[#192841] text-white py-2 px-5 rounded-md">Prediksi</button>
+              <button className={clsx('bg-[#192841] text-white py-2 px-5 rounded-md', disabled && 'bg-gray-400 cursor-not-allowed')}
+                disabled={disabled}
+                onClick={handlePrediksi}
+              >{
+                fetching ? <Spin /> : 'Prediksi'
+              }</button>
           </div>
         </div>
       </div>
