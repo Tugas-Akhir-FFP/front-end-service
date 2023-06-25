@@ -133,7 +133,7 @@ const Chart = ({data, tanggal, id}) => {
     return () => {
       charts.destroy();
     }
-  }, [data]);
+  }, [data, tanggal]);
 
   return (
     <div>
