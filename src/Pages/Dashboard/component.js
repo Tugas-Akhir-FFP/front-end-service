@@ -27,6 +27,7 @@ const ChartMultiline = React.lazy(() => import("../../Component/BarChart"));
 const Card = React.lazy(() => import("../../Component/Card"));
 const MapGis = React.lazy(() => import("../../Component/Map"));
 
+
 function Dashboard(props) {
   const [state, setState] = useState({
     province: null,
