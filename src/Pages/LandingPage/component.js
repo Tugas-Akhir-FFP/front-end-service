@@ -21,7 +21,7 @@ export default function Counter() {
         <button className={styles.button} onClick={onClick}>Mulai Sekarang</button>
       </div>
       <div className={styles.footer}>
-        // <div className={styles.left}>
+        {/* // <div className={styles.left}>
         //   <div className={styles.telu}>
         //     <span>Developed by:</span>
         //     <div className='bg-white rounded-full w-[70px] h-[70px] flex justify-center items-center'>
@@ -34,7 +34,7 @@ export default function Counter() {
         //       <img src={bmkg} />
         //       </div>
         //   </div>
-        // </div>
+        // </div> */}
         <div className={styles.right}>
           <div className={styles.contact}>
             <span>Contact Us</span>
