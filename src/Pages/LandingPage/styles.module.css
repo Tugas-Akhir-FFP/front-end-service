@@ -26,7 +26,7 @@
   @apply flex justify-between items-center w-full px-10 py-2 absolute bottom-0 left-0 transition-all duration-300 ease-in-out bg-[#192841];
   & .left {
     @apply flex gap-4 items-center;
-    & span {
+/*     & span {
       @apply text-white text-sm
     }
     & .telu {
@@ -40,7 +40,7 @@
         & img {
         @apply w-10;
       }
-    }
+    } */
   }
   & .right {
     & .contact {
