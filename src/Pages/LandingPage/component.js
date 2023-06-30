@@ -13,9 +13,7 @@ export default function Counter() {
   return (
     <div className={styles.root}>
       <h1 className={styles.nav}>
-        {/* <img src={"/pict/FPP.png"} alt="Picture of the author" width={100} height={100} /> */}
         <h1>Forest Fire Prediction In Indonesia</h1>
-        <button>Tim Kami</button>
       </h1>
       <div className={styles.container}>
         <h1>Forests are home to over 80 percent of land

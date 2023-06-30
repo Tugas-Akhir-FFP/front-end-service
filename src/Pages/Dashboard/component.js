@@ -84,30 +84,43 @@ function Dashboard(props) {
   const Provinsi = [
     { value: 0, label: 'Kalimantan Utara' },
     { value: 1, label: 'Kalimantan Tengah' },
-    { value: 2, label: 'Jawa Tengah' },
     { value: 3, label: 'Jawa Timur' },
+    // { value: 4, label: 'Riau' },
+    // { value: 5, label: 'Jambi' },
+    // { value: 6, label: 'Jawa Barat' },
   ]
   
 
   const Kabupaten = [
-    { value: 'Kab. Nunukan', label: 'Kab. Nunukan', id_province: 0 , id_kabupaten: 0},
+    { value: 'nunukanNew', label: 'Kab. Nunukan', id_province: 0 , id_kabupaten: 0},
     { value: 'kotawaringinbarat', label: 'Kab. Kotawaringin Barat', id_province: 1, id_kabupaten: 1 },
-    { value: 'Kab. MalangNew', label: 'Kab. Malang' , id_province: 2, id_kabupaten: 2},
+    { value: 'Kab. MalangNew', label: 'Kab. Malang' , id_province: 3, id_kabupaten: 2},
     { value: 'Kab. GresikNew', label: 'Kab. Gresik' , id_province: 3, id_kabupaten: 3},
-    { value: 'Kab. SidoarjoNew', label: 'Kab. Sidoarjo' , id_province: 3, id_kabupaten: 4},
+    { value: 'Kab. SidoarjoNew', label: 'Kab. Sidoarjo', id_province: 3, id_kabupaten: 4 },
+    // { value: 'barito selatan', label: 'Kab. Barito Selatan', id_province: 1, id_kabupaten: 5 },
+    // { value: 'indragiri hulu', label: 'Kab. Indragiri Hulu', id_province: 4, id_kabupaten: 6 },
+    // { value: 'kerinci', label: 'Kab. Kerinci', id_province: 5, id_kabupaten: 7 },
+    // { value: 'kab bogor', label: 'Kab. Bogor', id_province: 6, id_kabupaten: 8 },
+    // { value:'kab tuban', label: 'Kab. Tuban', id_province: 3, id_kabupaten: 9}
+    
   ]
   let filterKabupaten = Kabupaten.filter((item) => {
     return item.id_province === province
   })
   
   const Stasiun = [
-    { value: 'Stasiun Meterologi Nunukan', label: 'Stasiun Meterologi Nunukan', nama_kabupaten: "Kab. Nunukan" },
+    { value: 'Stasiun Meterologi Nunukan', label: 'Stasiun Meterologi Nunukan', nama_kabupaten: "nunukanNew" },
     { value: 'Stasiun Meterologi Iskandar', label: 'Stasiun Meterologi Iskandar', nama_kabupaten: "kotawaringinbarat"},
     { value: 'Stasiun Klimatologi Jawa Timur', label: 'Stasiun Klimatologi Jawa Timur', 
       nama_kabupaten: "Kab. MalangNew" },
     { value: 'Stasiun Meteorologi Sangkapura', label: 'Stasiun Meteorologi Sangkapura', 
     nama_kabupaten: "Kab. GresikNew" },
-    { value: 'Stasiun Meteorologi Juanda', label: 'Stasiun Meteorologi Juanda', nama_kabupaten: "Kab. SidoarjoNew" },
+    // { value: 'Stasiun Meteorologi Juanda', label: 'Stasiun Meteorologi Juanda', nama_kabupaten: "Kab. SidoarjoNew" },
+    // { value: 'Stasiun Meteorologi Tjilik Riwut', label: 'Stasiun Meteorologi Tjilik Riwut', nama_kabupaten: "barito selatan" },
+    // { value: 'Stasiun Meteorologi Rengat', label: 'Stasiun Meteorologi Rengat', nama_kabupaten: "indragiri hulu" },
+    // { value: 'Stasiun Meteorologi Sungai Penuh', label: 'Stasiun Meteorologi Sungai Penuh', nama_kabupaten: "kerinci" },
+    // { value: 'Stasiun Meteorologi Citeko', label: 'Stasiun Meteorologi Citeko', nama_kabupaten: "kab bogor" },
+    // { value: 'Stasiun Meteorologi Tuban', label: 'Stasiun Meteorologi Tuban', nama_kabupaten: "kab tuban" },
   ]
 
   let filterStasiun = Stasiun.filter((item) => {
@@ -169,38 +182,39 @@ function Dashboard(props) {
   const dmc = [];
   const ffmc = [];
   const error = state.dataPrediksi?.Prediksi_Error
-  ffmc.push(state.dataPrediksi?.Data_Result.map((item) => {
+  console.log(typeof state.dataPrediksi)
+  ffmc.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.ffmc
   }))
-  bui.push(state.dataPrediksi?.Data_Result.map((item) => {
+  bui.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.bui
   }))
-  dc.push(state.dataPrediksi?.Data_Result.map((item) => {
+  dc.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.dc
   }))
-  isi.push(state.dataPrediksi?.Data_Result.map((item) => {
+  isi.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.isi
   }))
-  dmc.push(state.dataPrediksi?.Data_Result.map((item) => {
+  dmc.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.dmc
   }))
 
-  fwi.push(state.dataPrediksi?.Data_Result.map((item) => {
+  fwi.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Category?.fwi
   }))
-  sedang.push(state.dataPrediksi?.Data_Result.map((item) => {
+  sedang.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Fuzzy[1]
   }))
-  tinggi.push(state.dataPrediksi?.Data_Result.map((item) => {
+  tinggi.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Fuzzy[2]
   }))
-  sangatTinggi.push(state.dataPrediksi?.Data_Result.map((item) => {
+  sangatTinggi.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Fuzzy[3]
   }))
-  tanggal.push(state.dataPrediksi?.Data_Result.map((item) => {
+  tanggal.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return moment(item.Date).format("DD MMMM YYYY")
   }))
-  rendah.push(state.dataPrediksi?.Data_Result.map((item) => {
+  rendah.push(state.dataPrediksi?.Data_Result?.map((item) => {
     return item.Result?.Fuzzy[0]
   }))
 
@@ -483,8 +497,8 @@ function Dashboard(props) {
           <div className="flex justify-center py-[10px]">
             <img src="/assets/bmkg.png" alt="bmkg" className="w-[50px]" />
             <div className="ml-[20px] flex flex-col">
-                <h1 className="text-xl">{stasiun}</h1>
-              <span className="text-sm">Lang -0.343553 Long -0.4353535</span>
+              <h1 className="text-xl">{stasiun}</h1>
+                <span className="text-sm text-[rgb(194,194,194,0.5)]">Lang -0.343553 Long -0.4353535</span>
             </div>
             
           </div>

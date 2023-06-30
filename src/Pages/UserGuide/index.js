@@ -4,6 +4,7 @@ import capture1 from "../../assets/capture1.jpg"
 import capture2 from "../../assets/capture2.jpg"
 import capture3 from "../../assets/capture3.jpg"
 import capture4 from "../../assets/capture4.jpg"
+import capture5 from "../../assets/forecast.jpg"
 
 function Component() {
   const [current, setCurrent] = useState(0);
@@ -26,15 +27,23 @@ function Component() {
   }
 
   const handlePrev = () => {
-    setIsNext(false)
-
-    setCurrent(current - 1)
+    if (current === 0) {
+      window.location.href = "/"
+    } else {
+      setIsNext(false)
+      setCurrent(current - 1)
+    }
   }
 
   const UserGuide = [
     {
+      title: "Pilih menu 'Prediksi' atau 'Forecast'",
+      description: "Pilih menu 'Prediksi' atau 'Forecast' di sidebar",
+      img: capture5
+    },
+    {
       title: "Pilih provinsi, kabupaten, dan stasiun",
-      description: "Pilih provinsi, kabupaten, dan stasiun yang ingin anda lihat datanya",
+      description: "Pilih provinsi, kabupaten, dan stasiun yang ingin anda prediksi atau forecast",
       img: capture1
     },
     {
